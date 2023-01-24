@@ -104,6 +104,8 @@ def evaluate(amortizer, num_post_samples=1000):
 
 if __name__ == "__main__":
 
+
+
     ### Latent distro 
     mixture = tfp.distributions.Mixture(
         cat=tfd.Categorical(probs=[0.5, 0.5]),
@@ -129,5 +131,5 @@ if __name__ == "__main__":
             history, amortizer = create_and_train(repetition_id, num_sims)
             samples_dict = evaluate(amortizer)
 
-            with open(f'./assests/bf_samples_{num_sims}_{repetition_id}.pkl', 'wb') as file:
+            with open(f'./assets/bf_samples_{num_sims}_{repetition_id}.pkl', 'wb') as file:
                 pickle.dump(samples_dict, file)
