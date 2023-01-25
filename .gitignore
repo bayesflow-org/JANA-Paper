@@ -2,3 +2,6 @@ __pycache__/
 .ipynb_checkpoints/
 */.ipynb_checkpoints/
 */__pycache__/
+
+# Exclude files stored in the OSF
+experiments/diffusion_model/data/osfstorage/
