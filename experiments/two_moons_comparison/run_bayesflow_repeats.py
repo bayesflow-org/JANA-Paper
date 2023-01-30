@@ -11,7 +11,7 @@ from bayesflow.networks import InvertibleNetwork
 from bayesflow.amortizers import AmortizedPosterior, AmortizedLikelihood, AmortizedPosteriorLikelihood
 from bayesflow.trainers import Trainer
 
-from simulation import TwoMoons
+from util.simulation import TwoMoons
 
 tfd = tfp.distributions
 
