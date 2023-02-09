@@ -18,7 +18,7 @@ def compare_estimates(samples_x, samples_y, point_agg=np.median, uncertainty_agg
                       param_names=None, fig_size=None, label_x='x', label_y='y',
                       label_fontsize=14, title_fontsize=16,
                       metric_fontsize=16, add_corr=True, add_r2=True, color='#8f2727', 
-                      n_col=None, n_row=None):
+                      markersize=6.0, n_col=None, n_row=None):
     
     """ Creates and plots publication-ready plot with point estimates + uncertainty.
     The point estimates can be controlled with the `point_agg` argument, and the uncertainty estimates
@@ -57,6 +57,8 @@ def compare_estimates(samples_x, samples_y, point_agg=np.median, uncertainty_agg
         A flag for adding R^2 between true and estimates to the plot.
     color             : str, optional, default: '#8f2727'
         The color for the true vs. estimated scatter points and errobars.
+    markersize        : float, optional, default: 6.0
+        The marker size in points.
         
     Returns
     -------
@@ -104,11 +106,11 @@ def compare_estimates(samples_x, samples_y, point_agg=np.median, uncertainty_agg
         # Add scatter and errorbars
         if uncertainty_agg is not None:
             if len(u_x.shape) == 3:
-                im = ax.errorbar(est_x[:, i], est_y[:, i], xerr=u_x[:, :, i], yerr=u_y[:, :, i], fmt='o', alpha=0.5, color=color)
+                im = ax.errorbar(est_x[:, i], est_y[:, i], xerr=u_x[:, :, i], yerr=u_y[:, :, i], fmt='o', alpha=0.5, color=color, markersize=markersize)
             else:
-                im = ax.errorbar(est_x[:, i], est_y[:, i], xerr=u_x[:, i], yerr=u_y[:, i], fmt='o', alpha=0.5, color=color)
+                im = ax.errorbar(est_x[:, i], est_y[:, i], xerr=u_x[:, i], yerr=u_y[:, i], fmt='o', alpha=0.5, color=color, markersize=markersize)
         else:
-            im = ax.scatter(est_x[:, i], est_y[:, i], alpha=0.5, color=color)
+            im = ax.scatter(est_x[:, i], est_y[:, i], alpha=0.5, color=color, s=markersize**2)
 
         # Make plots quadratic to avoid visual illusions
         lower = min(est_x[:, i].min(), est_y[:, i].min())
@@ -288,7 +290,7 @@ def compare_point_estimates(est_x, est_y, u_x=None, u_y=None,
                       param_names=None, fig_size=None, label_x='x', label_y='y',
                       label_fontsize=14, title_fontsize=16,
                       metric_fontsize=16, add_corr=True, add_r2=True, color='#8f2727', 
-                      n_col=None, n_row=None):
+                      markersize=6.0, n_col=None, n_row=None):
     
     """
     Creates and plots publication-ready comparison plots. The uncertainty can be
@@ -320,6 +322,8 @@ def compare_point_estimates(est_x, est_y, u_x=None, u_y=None,
         A flag for adding R^2 between true and estimates to the plot.
     color             : str, optional, default: '#8f2727'
         The color for the true vs. estimated scatter points and errobars.
+    markersize        : float, optional, default: 6.0
+        The marker size in points.
         
     Returns
     -------
@@ -365,9 +369,10 @@ def compare_point_estimates(est_x, est_y, u_x=None, u_y=None,
                 u_x_i = u_x[:, :, i] if len(u_x.shape) == 3 else u_x[:, i]
             if u_y is not None:
                 u_y_i = u_y[:, :, i] if len(u_y.shape) == 3 else u_y[:, i]
-            im = ax.errorbar(est_x[:, i], est_y[:, i], xerr=u_x_i, yerr=u_y_i, fmt='o', alpha=0.5, color=color)
+            im = ax.errorbar(est_x[:, i], est_y[:, i], xerr=u_x_i, yerr=u_y_i, fmt='o',
+                             alpha=0.5, color=color, markersize=markersize)
         else:
-            im = ax.scatter(est_x[:, i], est_y[:, i], alpha=0.5, color=color)
+            im = ax.scatter(est_x[:, i], est_y[:, i], alpha=0.5, color=color, s=markersize**2)
 
         # Make plots quadratic to avoid visual illusions
         lower = min(est_x[:, i].min(), est_y[:, i].min())
