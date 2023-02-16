@@ -1,7 +1,7 @@
 bayesflow==1.0.1b
 numpy==1.23
 pandas==1.4
-scikit-learn==1.1
+scikit-learn~=1.2.1
 scipy==1.9
 aesara==2.8.7
 seaborn==0.12
@@ -16,3 +16,6 @@ nbsphinx==0.8
 ipywidgets==7.6.5
 feather-format==0.4.1
 pyarrow=10.0.1
+papermill~=2.3.4
+torch~=1.13.1
+nflows~=0.12
