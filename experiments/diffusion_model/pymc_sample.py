@@ -5,7 +5,7 @@ import tensorflow as tf
 import pickle
 
 from bayesflow.amortizers import AmortizedLikelihood
-from bayesflow.networks import InvertibleNetwork, InvariantNetwork
+from bayesflow.networks import InvertibleNetwork
 from bayesflow.trainers import Trainer
 from bayesflow.mcmc import PyMCSurrogateLikelihood
 
@@ -21,7 +21,7 @@ param_names = ["v", "a", "t0", "w"]
 # specify the network architecture
 from tensorflow_probability import distributions as tfd
 
-coupling_net_settings={
+coupling_settings={
     't_args': {
         'dense_args': dict(units=32, kernel_initializer='glorot_uniform', activation='tanh'),
         'num_dense': 2,
@@ -33,7 +33,7 @@ coupling_net_settings={
         'spec_norm': False
     },
 }
-likelihood_net = InvertibleNetwork(num_params=2, num_coupling_layers=12, coupling_net_settings=coupling_net_settings)
+likelihood_net = InvertibleNetwork(num_params=2, num_coupling_layers=12, coupling_settings=coupling_settings)
 
 # Robust model training and generalisation with Studentising flows: https://arxiv.org/pdf/2006.06599.pdf
 df = 50

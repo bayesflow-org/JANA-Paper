@@ -19,7 +19,7 @@ param_names = ["v", "a", "t0", "w"]
 ### Specify the network architecture
 # as we only have a small number of inputs and of targets, we reduce the number of units per
 # coupling layer. The swish activation is used based on positive experiences in previous runs
-coupling_net_settings={
+coupling_settings={
     't_args': {
         'dense_args': dict(units=32, kernel_initializer='glorot_uniform', activation='tanh'),
         'num_dense': 2,
@@ -31,7 +31,7 @@ coupling_net_settings={
 }
 # we only use 10 layers, using more layers leads to decreased speed but more accurate approximation
 likelihood_net = InvertibleNetwork(num_params=2, num_coupling_layers=12,
-                                   coupling_net_settings=coupling_net_settings)
+                                   coupling_settings=coupling_settings)
 
 # Based on Alexanderson & Henter (2020): Robust model training and generalisation with
 # Studentising flows: https://arxiv.org/pdf/2006.06599.pdf

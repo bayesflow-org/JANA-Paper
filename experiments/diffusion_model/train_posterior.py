@@ -5,7 +5,7 @@ import tensorflow as tf
 from tensorflow_probability import distributions as tfd
 
 from bayesflow.amortizers import AmortizedPosterior
-from bayesflow.networks import InvertibleNetwork, InvariantNetwork
+from bayesflow.networks import InvertibleNetwork, DeepSet
 from bayesflow.trainers import Trainer
 
 from utility_functions import feather_loader
@@ -17,7 +17,7 @@ print("GPUs:", tf.config.experimental.list_physical_devices('GPU'))
 param_names = ["v", "a", "t0", "w"]
 
 ### Specify the network architecture
-summary_net = InvariantNetwork()
+summary_net = DeepSet()
 # Based on Alexanderson & Henter (2020): Robust model training and generalisation with
 # Studentising flows: https://arxiv.org/pdf/2006.06599.pdf
 df = 50
