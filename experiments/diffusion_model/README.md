@@ -1,3 +1,6 @@
+## Structure
+Please refer to `01_joint.ipynb` and `02_likelihood_mcmc.ipynb` for explanations about the code. All relevant files in this directory are referenced there.
+
 ## Dependencies
 This code uses R and Python. The following R (4.1.2) packages were used:
 
@@ -18,4 +21,4 @@ In addition to BayesFlow's dependencies, this example uses the following package
 - `pyarrow: 10.0.1`
 - `cmdstanpy: 1.0.7`
 
-BayesFlow version `1.0.1b0` was used.
+BayesFlow branch `Development` at commit `153dfefadd347717b7aeb9c4872a4b51ac04e83c` was used.
