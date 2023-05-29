@@ -1,9 +1,11 @@
-bayesflow==1.0.1b
+# bayesflow==1.0.1b
+arviz==0.14.0
 numpy==1.23
 pandas==1.4
 scikit-learn~=1.2.1
 scipy==1.9
 aesara==2.8.7
+pymc==4.4.0
 seaborn==0.12
 tensorflow-macos==2.10; sys_platform == 'darwin' and platform_machine == 'arm64'
 tensorflow==2.10.1; sys_platform != 'darwin' or platform_machine != 'arm64'
@@ -15,7 +17,7 @@ ipykernel==6.7
 nbsphinx==0.8
 ipywidgets==7.6.5
 feather-format==0.4.1
-pyarrow=10.0.1
+pyarrow==10.0.1
 papermill~=2.3.4
 torch~=1.13.1
 nflows~=0.12
