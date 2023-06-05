@@ -2,7 +2,7 @@ import sys, os
 import numpy as np
 import pickle
 
-sys.path.append(os.path.abspath(os.path.join('../../../BayesFlow')))
+sys.path.append(os.path.abspath(os.path.join('../../../../BayesFlow')))
 from bayesflow import benchmarks
 
 # Creates a re-usable test set of data sets from the different benchmark models
@@ -18,5 +18,5 @@ for benchmark_name in benchmarks.available_benchmarks:
         sims_conf = benchmark.configurator(sims, as_summary_condition=True)
     else:
         sims_conf = benchmark.configurator(sims)
-    with open(f'test_data/{benchmark_name}_test.pkl', 'wb') as f:
+    with open(f'../test_data/{benchmark_name}_test.pkl', 'wb') as f:
         pickle.dump(sims_conf, f)
