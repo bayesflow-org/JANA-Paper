@@ -1,8 +1,0 @@
-model_checkpoint_path: "ckpt-128"
-all_model_checkpoint_paths: "ckpt-126"
-all_model_checkpoint_paths: "ckpt-127"
-all_model_checkpoint_paths: "ckpt-128"
-all_model_checkpoint_timestamps: 1674471421.3033478
-all_model_checkpoint_timestamps: 1674471426.2737708
-all_model_checkpoint_timestamps: 1674471431.1812558
-last_preserved_timestamp: 1674470637.6486778
