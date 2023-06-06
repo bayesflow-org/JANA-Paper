@@ -12,6 +12,7 @@ N_TEST = 1000
 SEED = 42
 
 for benchmark_name in benchmarks.available_benchmarks:
+
     benchmark = benchmarks.Benchmark(benchmark_name, seed=SEED)
     sims = benchmark.generative_model(N_TEST)
     if benchmark_name in ['slcp_distractors', 'bernoulli_glm_raw', 'sir', 'lotka_volterra']:
