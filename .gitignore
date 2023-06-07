@@ -8,3 +8,7 @@ experiments/benchmarks/figures/
 
 # Exclude files stored in the OSF
 experiments/diffusion_model/data/osfstorage/
+/experiments/two_moons/output/
+/experiments/two_moons/plots/
+/experiments/two_moons/sbi-logs/
+/experiments/two_moons/.idea/
