@@ -4,14 +4,18 @@ from config import torch_device
 from two_moons_wiqvist_numpy import mean_radius, sd_radius, baseoffset
 from sbi.utils import BoxUniform
 
-prior_torch = BoxUniform(low=-2 * torch.ones(2), high=2 * torch.ones(2), device=torch_device)
+prior_torch = BoxUniform(
+    low=-2 * torch.ones(2), high=2 * torch.ones(2), device=torch_device
+)
 
 
 def simulator_torch(theta):
     theta = theta.reshape(-1)
     a = torch.tensor(torch.pi * (torch.rand(1) - 0.5), device=torch_device)
     r = mean_radius + torch.randn(1, device=torch_device) * sd_radius
-    p = torch.tensor([r * torch.cos(a) + baseoffset, r * torch.sin(a)], device=torch_device)
+    p = torch.tensor(
+        [r * torch.cos(a) + baseoffset, r * torch.sin(a)], device=torch_device
+    )
     ang = torch.tensor([-torch.pi / 4.0], device=torch_device)
     c = torch.cos(ang)
     s = torch.sin(ang)
@@ -24,7 +28,9 @@ def simulator_torch_snpla(theta):
     theta = theta.reshape(-1)
     a = torch.tensor(torch.pi * (torch.rand(1) - 0.5), device=torch_device)
     r = mean_radius + torch.randn(1, device=torch_device) * sd_radius
-    p = torch.tensor([r * torch.cos(a) + baseoffset, r * torch.sin(a)], device=torch_device)
+    p = torch.tensor(
+        [r * torch.cos(a) + baseoffset, r * torch.sin(a)], device=torch_device
+    )
     ang = torch.tensor([-torch.pi / 4.0], device=torch_device)
     c = torch.cos(ang)
     s = torch.sin(ang)
@@ -39,7 +45,7 @@ def simulator_torch_batched(theta):
     x_samples = torch.zeros((n_sim, data_dim))
 
     for i in range(n_sim):
-        x_samples[i, ] = simulator_torch(theta[i,])
+        x_samples[i,] = simulator_torch(theta[i,])
 
     return x_samples
 
@@ -49,6 +55,6 @@ def simulator_torch_snpla_batched(theta):
     x_samples = torch.zeros((n_sim, data_dim))
 
     for i in range(n_sim):
-        x_samples[i, ] = simulator_torch(theta[i,])
+        x_samples[i,] = simulator_torch(theta[i,])
 
     return x_samples.to(dtype=torch.float32)

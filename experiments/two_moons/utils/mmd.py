@@ -3,15 +3,33 @@ import tensorflow as tf
 import numpy as np
 
 
-def maximum_mean_discrepancy(source_samples, target_samples, kernel="gaussian",
-                             minimum=0., squared=True):
-    """ This Maximum Mean Discrepancy (MMD) loss is calculated with a number of different Gaussian or
+def maximum_mean_discrepancy(
+    source_samples, target_samples, kernel="gaussian", minimum=0.0, squared=True
+):
+    """This Maximum Mean Discrepancy (MMD) loss is calculated with a number of different Gaussian or
     Inverse-Multiquadratic kernels.
     """
 
     sigmas = [
-        1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1, 5, 10, 15, 20, 25, 30, 35, 100,
-        1e3, 1e4, 1e5, 1e6
+        1e-6,
+        1e-5,
+        1e-4,
+        1e-3,
+        1e-2,
+        1e-1,
+        1,
+        5,
+        10,
+        15,
+        20,
+        25,
+        30,
+        35,
+        100,
+        1e3,
+        1e4,
+        1e5,
+        1e6,
     ]
 
     if kernel == "gaussian":
@@ -33,7 +51,7 @@ def maximum_mean_discrepancy(source_samples, target_samples, kernel="gaussian",
 
 
 def _gaussian_kernel_matrix(x, y, sigmas):
-    """ Computes a Gaussian Radial Basis Kernel between the samples of x and y.
+    """Computes a Gaussian Radial Basis Kernel between the samples of x and y.
     We create a sum of multiple gaussian kernels each having a width :math:`\sigma_i`.
     Parameters
     ----------
@@ -51,7 +69,7 @@ def _gaussian_kernel_matrix(x, y, sigmas):
     y = tf.cast(y, tf.float32)
 
     norm = lambda v: tf.math.reduce_sum(tf.square(v), 1)
-    beta = 1. / (2. * (tf.expand_dims(sigmas, 1)))
+    beta = 1.0 / (2.0 * (tf.expand_dims(sigmas, 1)))
     beta = tf.cast(beta, tf.float32)
     dist = tf.transpose(norm(tf.expand_dims(x, 2) - tf.transpose(y)))
     s = tf.matmul(beta, tf.reshape(dist, (1, -1)))
@@ -60,7 +78,7 @@ def _gaussian_kernel_matrix(x, y, sigmas):
 
 
 def _mmd_kernel(x, y, kernel=None):
-    """ Computes the Maximum Mean Discrepancy (MMD) of two samples: x and y.
+    """Computes the Maximum Mean Discrepancy (MMD) of two samples: x and y.
     Maximum Mean Discrepancy (MMD) is a distance-measure between the samples of the distributions of x and y.
     Parameters
     ----------
@@ -83,7 +101,7 @@ def _mmd_kernel(x, y, kernel=None):
 
 
 def _inverse_multiquadratic_kernel_matrix(x, y, sigmas):
-    """ Computes an inverse multiquadratic RBF between the samples of x and y.
+    """Computes an inverse multiquadratic RBF between the samples of x and y.
     We create a sum of multiple IM-RBF kernels each having a width :math:`\sigma_i`.
     Parameters
     ----------
@@ -97,6 +115,8 @@ def _inverse_multiquadratic_kernel_matrix(x, y, sigmas):
         RBF kernel of shape [num_samples{x}, num_samples{y}]
     """
 
-    dist = tf.expand_dims(tf.reduce_sum((x[:, None, :] - y[None, :, :]) ** 2, axis=-1), axis=-1)
+    dist = tf.expand_dims(
+        tf.reduce_sum((x[:, None, :] - y[None, :, :]) ** 2, axis=-1), axis=-1
+    )
     sigmas = tf.expand_dims(sigmas, 0)
     return tf.reduce_sum(sigmas / (dist + sigmas), axis=-1)

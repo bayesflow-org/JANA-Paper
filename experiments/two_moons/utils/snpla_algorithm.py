@@ -3,31 +3,33 @@ import copy
 import math
 
 
-def inference_snpla(flow_lik,
-                    flow_post,
-                    prior,
-                    simulator,
-                    optimizer_lik,
-                    optimizer_post,
-                    decay_rate_post,
-                    x_o,
-                    x_o_batch_post,
-                    dim_post,
-                    prob_prior,
-                    nbr_lik,
-                    nbr_epochs_lik,
-                    nbr_post,
-                    nbr_epochs_post,
-                    batch_size,
-                    batch_size_post,
-                    decay_rate_lik=0,
-                    epochs_hot_start=10,
-                    validation_fraction=0.1,
-                    early_stopping=True,
-                    stop_after_epochs=20):
+def inference_snpla(
+    flow_lik,
+    flow_post,
+    prior,
+    simulator,
+    optimizer_lik,
+    optimizer_post,
+    decay_rate_post,
+    x_o,
+    x_o_batch_post,
+    dim_post,
+    prob_prior,
+    nbr_lik,
+    nbr_epochs_lik,
+    nbr_post,
+    nbr_epochs_post,
+    batch_size,
+    batch_size_post,
+    decay_rate_lik=0,
+    epochs_hot_start=10,
+    validation_fraction=0.1,
+    early_stopping=True,
+    stop_after_epochs=20,
+):
     """
     Runs the snpla method
-    
+
     :param flow_lik: (untrained) flow likelihood model
     :param flow_post: (untrained) flow posterior model
     :param prior: a pytorch distribution
@@ -60,14 +62,17 @@ def inference_snpla(flow_lik,
     models_lik = []
     models_post = []
 
-    scheduler_post = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer_post, gamma=decay_rate_post)
-    scheduler_lik = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer_lik, gamma=decay_rate_lik)
+    scheduler_post = torch.optim.lr_scheduler.ExponentialLR(
+        optimizer=optimizer_post, gamma=decay_rate_post
+    )
+    scheduler_lik = torch.optim.lr_scheduler.ExponentialLR(
+        optimizer=optimizer_lik, gamma=decay_rate_lik
+    )
 
     x_full_list = []
     theta_full_list = []
 
     for i in range(nbr_iter):
-
         # decay post lr
         if i >= 1 and decay_rate_post > 0:
             scheduler_post.step()
@@ -89,7 +94,9 @@ def inference_snpla(flow_lik,
 
         theta_prior = prior.sample(sample_shape=(nbr_lik_prior,))
 
-        if nbr_like_post == 0:  # this is to avoid concatunate a tensor with grad to the theta tensor
+        if (
+            nbr_like_post == 0
+        ):  # this is to avoid concatunate a tensor with grad to the theta tensor
             theta_full = theta_prior
         else:
             theta_post = flow_post.sample(nbr_like_post, context=x_o)  # .reshape(1,dim)
@@ -125,23 +132,50 @@ def inference_snpla(flow_lik,
         print(theta_full_like_train.shape)
 
         # update likelihood model
-        _train_like(x_full_like_train, theta_full_like_train, nbr_epochs_lik[i], batch_size, flow_lik, optimizer_lik,
-                    validation_fraction, early_stopping, stop_after_epochs)
+        _train_like(
+            x_full_like_train,
+            theta_full_like_train,
+            nbr_epochs_lik[i],
+            batch_size,
+            flow_lik,
+            optimizer_lik,
+            validation_fraction,
+            early_stopping,
+            stop_after_epochs,
+        )
 
         # update posterior model
 
         # 2' step: train posterior model from prior predictive first, only used to get a hot start
         if i == 0:
-            _train_post_prior_pred(x_full_like_train, theta_full_like_train, epochs_hot_start, batch_size, flow_post,
-                                   optimizer_post,
-                                   validation_fraction)
+            _train_post_prior_pred(
+                x_full_like_train,
+                theta_full_like_train,
+                epochs_hot_start,
+                batch_size,
+                flow_post,
+                optimizer_post,
+                validation_fraction,
+            )
             # models_post.append(copy.deepcopy(flow_post))
 
         # Sample training data from posterior
 
-        _train_post_sim_fly(nbr_post[i], nbr_epochs_post[i], batch_size_post, flow_post, flow_lik, optimizer_post,
-                            prior, x_o_batch_post, dim_post, x_o, validation_fraction, early_stopping,
-                            stop_after_epochs)
+        _train_post_sim_fly(
+            nbr_post[i],
+            nbr_epochs_post[i],
+            batch_size_post,
+            flow_post,
+            flow_lik,
+            optimizer_post,
+            prior,
+            x_o_batch_post,
+            dim_post,
+            x_o,
+            validation_fraction,
+            early_stopping,
+            stop_after_epochs,
+        )
 
         # save trained model for each iter
         models_lik.append(copy.deepcopy(flow_lik))
@@ -150,8 +184,17 @@ def inference_snpla(flow_lik,
     return models_lik, models_post
 
 
-def _train_like(x, theta, epochs, batch_size, flow_lik, optimizer_lik, validation_fraction, early_stopping,
-                stop_after_epochs):
+def _train_like(
+    x,
+    theta,
+    epochs,
+    batch_size,
+    flow_lik,
+    optimizer_lik,
+    validation_fraction,
+    early_stopping,
+    stop_after_epochs,
+):
     print("start update likelihood model")
 
     x, theta, x_eval, theta_eval = _split_train_eval(x, theta, validation_fraction)
@@ -163,7 +206,6 @@ def _train_like(x, theta, epochs, batch_size, flow_lik, optimizer_lik, validatio
     loss_start = float("inf")
 
     for e in range(epochs):  # this should be a while loop
-
         # print("--")
         # print(nbr_waited)
         # print(current_lowest_eval_loss)
@@ -175,9 +217,14 @@ def _train_like(x, theta, epochs, batch_size, flow_lik, optimizer_lik, validatio
 
         # run early-stopping
         if early_stopping and e >= 1:  # TODO maybe this should be >= 10??
-            nbr_waited, current_lowest_eval_loss = _early_stopping_check(losses_eval[e], losses_eval[e - 1],
-                                                                         current_lowest_eval_loss, nbr_waited,
-                                                                         stop_after_epochs, e)
+            nbr_waited, current_lowest_eval_loss = _early_stopping_check(
+                losses_eval[e],
+                losses_eval[e - 1],
+                current_lowest_eval_loss,
+                nbr_waited,
+                stop_after_epochs,
+                e,
+            )
             if nbr_waited is None:
                 return None
 
@@ -188,20 +235,22 @@ def _train_like(x, theta, epochs, batch_size, flow_lik, optimizer_lik, validatio
         for i in range(0, x.size()[0], batch_size):
             optimizer_lik.zero_grad()
 
-            indices = permutation[i:i + batch_size]
+            indices = permutation[i : i + batch_size]
             input_x_batch = x[indices, :]
             input_theta_batch = theta[indices, :]
 
-            loss = -(flow_lik.log_prob(inputs=input_x_batch, context=input_theta_batch)).mean()
+            loss = -(
+                flow_lik.log_prob(inputs=input_x_batch, context=input_theta_batch)
+            ).mean()
 
             loss_e = loss_e + loss.item()
 
             loss.backward()
             optimizer_lik.step()
 
-        #if e == 0:
+        # if e == 0:
         #    loss_start = loss_e / (x.size()[0] / batch_size)
-        #if e > 0 and loss_e / (x.size()[0] / batch_size) < loss_start/2:
+        # if e > 0 and loss_e / (x.size()[0] / batch_size) < loss_start/2:
         #    print("Early-stopping: loss halfed, do not imporve likelihood model more this iter")
         #    return None
 
@@ -210,7 +259,9 @@ def _train_like(x, theta, epochs, batch_size, flow_lik, optimizer_lik, validatio
     return None
 
 
-def _train_post_prior_pred(x, theta, epochs, batch_size, flow_post, optimizer_post, validation_fraction):
+def _train_post_prior_pred(
+    x, theta, epochs, batch_size, flow_post, optimizer_post, validation_fraction
+):
     print("start update posterior model from prior pred - hot start")
 
     # TODO select random eval for x and theta
@@ -220,7 +271,6 @@ def _train_post_prior_pred(x, theta, epochs, batch_size, flow_post, optimizer_po
     losses_eval = []
 
     for e in range(epochs):  # this should be a while loop
-
         # run eval
         with torch.no_grad():
             loss_eval = -(flow_post.log_prob(inputs=theta_eval, context=x_eval)).mean()
@@ -233,11 +283,13 @@ def _train_post_prior_pred(x, theta, epochs, batch_size, flow_post, optimizer_po
         for i in range(0, x.size()[0], batch_size):
             optimizer_post.zero_grad()
 
-            indices = permutation[i:i + batch_size]
+            indices = permutation[i : i + batch_size]
             input_x_batch = x[indices, :]
             input_theta_batch = theta[indices, :]
 
-            loss = -(flow_post.log_prob(inputs=input_theta_batch, context=input_x_batch)).mean()
+            loss = -(
+                flow_post.log_prob(inputs=input_theta_batch, context=input_x_batch)
+            ).mean()
 
             loss_e = loss_e + loss.item()
 
@@ -249,11 +301,24 @@ def _train_post_prior_pred(x, theta, epochs, batch_size, flow_post, optimizer_po
     return None
 
 
-def _train_post_sim_fly(nbr_post, epochs, batch_size, flow_post, flow_lik, optimizer_post, prior, x_o_batch_post,
-                        dim_post, x_o, validation_fraction, early_stopping, stop_after_epochs):
+def _train_post_sim_fly(
+    nbr_post,
+    epochs,
+    batch_size,
+    flow_post,
+    flow_lik,
+    optimizer_post,
+    prior,
+    x_o_batch_post,
+    dim_post,
+    x_o,
+    validation_fraction,
+    early_stopping,
+    stop_after_epochs,
+):
     print("start update posterior model")
 
-    #with torch.no_grad():
+    # with torch.no_grad():
     #    for param in flow_post.parameters():
     #        param.add_(torch.randn(param.size()) * 0.01)
 
@@ -269,20 +334,20 @@ def _train_post_sim_fly(nbr_post, epochs, batch_size, flow_post, flow_lik, optim
         x_o_val[i, :] = x_o_batch_post[0, :]
 
     # calc noise_eval
-    #nbr_obs_eval = x_o_val.shape[0]
-    #embedded_context = flow_post._embedding_net(x_o)  # .reshape(1,dim)
-    #noise_eval, log_prob_eval = flow_post._distribution.sample_and_log_prob(
+    # nbr_obs_eval = x_o_val.shape[0]
+    # embedded_context = flow_post._embedding_net(x_o)  # .reshape(1,dim)
+    # noise_eval, log_prob_eval = flow_post._distribution.sample_and_log_prob(
     #    nbr_obs_eval, context=embedded_context
-    #)
+    # )
 
-    #noise_eval = noise_eval.reshape((nbr_obs_eval, dim_post))
-    #logbase_post_eval = log_prob_eval.reshape((nbr_obs_eval))
+    # noise_eval = noise_eval.reshape((nbr_obs_eval, dim_post))
+    # logbase_post_eval = log_prob_eval.reshape((nbr_obs_eval))
 
     # create noise for batches
-    #noise_batches = []
-    #log_prob_batches = []
+    # noise_batches = []
+    # log_prob_batches = []
 
-    #for i in range(nbr_post // batch_size):
+    # for i in range(nbr_post // batch_size):
     #    embedded_context = flow_post._embedding_net(x_o)  # .reshape(1,dim)
     #    noise, log_prob = flow_post._distribution.sample_and_log_prob(
     #        batch_size, context=embedded_context
@@ -292,7 +357,6 @@ def _train_post_sim_fly(nbr_post, epochs, batch_size, flow_post, flow_lik, optim
     #    log_prob_batches.append(log_prob.reshape((batch_size)))
 
     for e in range(epochs):
-
         # set new order of the batches
         idx_batches = torch.randperm(nbr_post // batch_size)
 
@@ -310,15 +374,22 @@ def _train_post_sim_fly(nbr_post, epochs, batch_size, flow_post, flow_lik, optim
 
             noise_eval = noise_eval.reshape((nbr_obs_eval, dim_post))
             logbase_post_eval = log_prob_eval.reshape((nbr_obs_eval))
-            loss_eval = _calc_loss_post_training(flow_post, flow_lik, prior, noise_eval, logbase_post_eval, x_o_val)
+            loss_eval = _calc_loss_post_training(
+                flow_post, flow_lik, prior, noise_eval, logbase_post_eval, x_o_val
+            )
 
             losses_eval.append(loss_eval.item())
 
         # run early-stopping
         if early_stopping and e >= 1:
-            nbr_waited, current_lowest_eval_loss = _early_stopping_check(losses_eval[e], losses_eval[e - 1],
-                                                                         current_lowest_eval_loss, nbr_waited,
-                                                                         stop_after_epochs, e)
+            nbr_waited, current_lowest_eval_loss = _early_stopping_check(
+                losses_eval[e],
+                losses_eval[e - 1],
+                current_lowest_eval_loss,
+                nbr_waited,
+                stop_after_epochs,
+                e,
+            )
             if nbr_waited is None:
                 return None
 
@@ -333,10 +404,17 @@ def _train_post_sim_fly(nbr_post, epochs, batch_size, flow_post, flow_lik, optim
 
             optimizer_post.zero_grad()
 
-            #noise_batch = noise_batches[idx_batches[i]]
-            #logbase_post_batch = log_prob_batches[idx_batches[i]]
+            # noise_batch = noise_batches[idx_batches[i]]
+            # logbase_post_batch = log_prob_batches[idx_batches[i]]
 
-            loss = _calc_loss_post_training(flow_post, flow_lik, prior, noise_batch, logbase_post_batch, x_o_batch_post)
+            loss = _calc_loss_post_training(
+                flow_post,
+                flow_lik,
+                prior,
+                noise_batch,
+                logbase_post_batch,
+                x_o_batch_post,
+            )
 
             loss_e = loss_e + loss.item()
 
@@ -348,10 +426,14 @@ def _train_post_sim_fly(nbr_post, epochs, batch_size, flow_post, flow_lik, optim
     return None
 
 
-def _calc_loss_post_training(flow_post, flow_lik, prior, noise_batch, logbase_post_batch, x_o_batch_post):
+def _calc_loss_post_training(
+    flow_post, flow_lik, prior, noise_batch, logbase_post_batch, x_o_batch_post
+):
     embedded_context = flow_post._embedding_net(x_o_batch_post)  # .reshape(1,dim)
 
-    theta_batch, logabsdet_post = flow_post._transform.inverse(noise_batch, context=embedded_context)
+    theta_batch, logabsdet_post = flow_post._transform.inverse(
+        noise_batch, context=embedded_context
+    )
 
     # TODO this step can be made much easier to follow by directly using sample_and_log_prob
     #  (which is ok since we do not need the the pdf of the base dist)
@@ -390,16 +472,24 @@ def _calc_loss_post_training(flow_post, flow_lik, prior, noise_batch, logbase_po
 
 
 # TODO have to check how this playes along with negative losses
-def _early_stopping_check(loss_new, loss_old, current_lowest_eval_loss, nbr_waited, stop_after_epochs, epoch):
+def _early_stopping_check(
+    loss_new, loss_old, current_lowest_eval_loss, nbr_waited, stop_after_epochs, epoch
+):
     # update current_lowest_eval_loss and nbr_waited
     if loss_new > loss_old:  # early-stopping eval loss is not improving
-        if loss_old < current_lowest_eval_loss:  # updated current_lowest_eval_loss if loss_old is better
+        if (
+            loss_old < current_lowest_eval_loss
+        ):  # updated current_lowest_eval_loss if loss_old is better
             current_lowest_eval_loss = loss_old
         nbr_waited = nbr_waited + 1  # increase nbr_waited
-    elif loss_new > current_lowest_eval_loss:  # loss_new is not better than current_lowest_eval_loss, increase
+    elif (
+        loss_new > current_lowest_eval_loss
+    ):  # loss_new is not better than current_lowest_eval_loss, increase
         # nbr_waited
         nbr_waited = nbr_waited + 1
-    elif loss_new < current_lowest_eval_loss:  # loss_new is better than current_lowest_eval_loss, reset nbr_waited
+    elif (
+        loss_new < current_lowest_eval_loss
+    ):  # loss_new is better than current_lowest_eval_loss, reset nbr_waited
         current_lowest_eval_loss = loss_new
         nbr_waited = 0  # reset nbr_waited
 
@@ -416,8 +506,14 @@ def _print_early_stopping_info(epochs):
 
 
 def _print_update(epoch, train_loss, eval_loss):
-    print("Epoch: " + str(epoch) + ", loss (training): " + str(round(train_loss, 4)) + ", loss (eval): "
-          + str(round(eval_loss, 4)))
+    print(
+        "Epoch: "
+        + str(epoch)
+        + ", loss (training): "
+        + str(round(train_loss, 4))
+        + ", loss (eval): "
+        + str(round(eval_loss, 4))
+    )
 
 
 def _split_train_eval(x, theta, validation_fraction):

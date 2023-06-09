@@ -12,7 +12,12 @@ def simulator_numpy(theta, rng=None):
 
     # Forward process
     rhs1 = np.array([r * np.cos(alpha) + 0.25, r * np.sin(alpha)])
-    rhs2 = np.array([-np.abs(theta[0] + theta[1]) / np.sqrt(2.0), (-theta[0] + theta[1]) / np.sqrt(2.0)])
+    rhs2 = np.array(
+        [
+            -np.abs(theta[0] + theta[1]) / np.sqrt(2.0),
+            (-theta[0] + theta[1]) / np.sqrt(2.0),
+        ]
+    )
 
     return rhs1 + rhs2
 
@@ -22,7 +27,7 @@ def simulator_numpy_batched(theta):
     x_samples = np.zeros((n_sim, data_dim))
 
     for i in range(n_sim):
-        x_samples[i, ] = simulator_numpy(theta[i, ])
+        x_samples[i,] = simulator_numpy(theta[i,])
 
     return x_samples
 

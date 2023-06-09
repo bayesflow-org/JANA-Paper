@@ -20,10 +20,11 @@ def set_up_networks(seed=10, dim=2):
     transforms = []
     for _ in range(num_layers):
         transforms.append(ReversePermutation(features=2))
-        transforms.append(MaskedAffineAutoregressiveTransform(features=2,
-                                                              hidden_features=50,
-                                                              context_features=dim,
-                                                              num_blocks=1))
+        transforms.append(
+            MaskedAffineAutoregressiveTransform(
+                features=2, hidden_features=50, context_features=dim, num_blocks=1
+            )
+        )
 
     transform = CompositeTransform(transforms)
 
@@ -43,10 +44,11 @@ def set_up_networks(seed=10, dim=2):
 
     for _ in range(num_layers):
         transforms.append(ReversePermutation(features=dim))
-        transforms.append(MaskedAffineAutoregressiveTransform(features=dim,
-                                                              hidden_features=50,
-                                                              context_features=2,
-                                                              num_blocks=1))
+        transforms.append(
+            MaskedAffineAutoregressiveTransform(
+                features=dim, hidden_features=50, context_features=2, num_blocks=1
+            )
+        )
 
     transform = CompositeTransform(transforms)
 

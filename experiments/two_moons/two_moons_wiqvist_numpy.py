@@ -29,7 +29,7 @@ def simulator_numpy_batched(theta):
     x_samples = np.zeros((n_sim, data_dim))
 
     for i in range(n_sim):
-        x_samples[i, ] = simulator_numpy(theta[i, ]).flatten()
+        x_samples[i,] = simulator_numpy(theta[i,]).flatten()
 
     return x_samples
 
