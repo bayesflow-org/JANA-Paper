@@ -3,8 +3,11 @@ __pycache__/
 */.ipynb_checkpoints/
 */__pycache__/
 
-# Exclude figures folder
-experiments/benchmarks/figures/
+# Exclude figures folder contents
+experiments/benchmarks/figures/*
+experiments/epidemiology/figures/*
+experiments/bayesian_denoising/figures/
+experiments/diffusion_model/figures/
 
 # Exclude files stored in the OSF
 experiments/diffusion_model/data/osfstorage/
