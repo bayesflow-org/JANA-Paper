@@ -2,7 +2,7 @@
 
 <img src="img/conceptual_overview.png" width=80% height=80%>
 
-This repository contains the code for running and reproducing the experiments from the paper <strong>JANA: Jointly Amortized Neural Approximation of Complex Bayesian Models</strong>, presented at the Conference on Uncertainty in Artificial Intelligence (UAI 2023).
+This repository contains the code for running and reproducing the experiments from the paper [JANA: Jointly Amortized Neural Approximation of Complex Bayesian Models](https://arxiv.org/abs/2302.09125), presented at the Conference on Uncertainty in Artificial Intelligence (UAI 2023).
 
 JANA lets you train and validate specialized neural networks for <em>simultaneously amortized</em> simulation-based inference and surrogate modeling in a Bayesian framework. The method is described in our paper:
 
