@@ -390,19 +390,23 @@ def compare_point_estimates(est_x, est_y, u_x=None, u_y=None,
         ax.set_ylabel(label_y, fontsize=label_fontsize)
         if add_r2:
             r2 = r2_score(est_x[:, i], est_y[:, i])
-            ax.text(0.1, 0.9, '$R^2$ = {:.3f}'.format(r2),
-                     horizontalalignment='left',
+            ax.text(0.5, 0.9, '$R^2$ = {:.3f}'.format(r2),
+                     horizontalalignment='right',
                      verticalalignment='center',
                      transform=ax.transAxes, 
                      size=metric_fontsize)
         if add_corr:
             corr = np.corrcoef(est_x[:, i], est_y[:, i])[0, 1]
-            ax.text(0.1, 0.8, '$r$ = {:.3f}'.format(corr),
-                         horizontalalignment='left',
+            ax.text(0.5, 0.8, '$r$ = {:.3f}'.format(corr),
+                         horizontalalignment='right',
                          verticalalignment='center',
                          transform=ax.transAxes, 
                          size=metric_fontsize)
         ax.set_title(param_names[i], fontsize=title_fontsize)
+        
+        # This is custom for the DDM plots
+        ax.set_xticks([-300, -200, -100, 0, 100])
+        ax.set_yticks([-300, -200, -100, 0, 100])
         
         # Prettify
         sns.despine(ax=ax)
