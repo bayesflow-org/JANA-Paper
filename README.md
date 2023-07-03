@@ -22,7 +22,7 @@ Coming soon...
 
 ## Support
 
-This work supported by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany’s Excellence Strategy -– EXC-2181 - 390900948 (the Heidelberg Cluster of Excellence STRUCTURES) and -- EXC-2075 - 390740016 (the Stuttgart Cluster of Excellence SimTech), the Cyber Valley Research Fund (grant number: CyVy-RF-2021-16), the Swedish National Research Council (Vetenskapsrådet 2019-03924), the Chalmers AI Research Centre, the Informatics for Life initiative funded by the Klaus Tschira Foundation and Google Cloud through the Academic Research Grants program.
+This work was supported by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany’s Excellence Strategy -– EXC-2181 - 390900948 (the Heidelberg Cluster of Excellence STRUCTURES) and -- EXC-2075 - 390740016 (the Stuttgart Cluster of Excellence SimTech), the Cyber Valley Research Fund (grant number: CyVy-RF-2021-16), the Swedish National Research Council (Vetenskapsrådet 2019-03924), the Chalmers AI Research Centre, the Informatics for Life initiative funded by the Klaus Tschira Foundation and Google Cloud through the Academic Research Grants program.
 
 ## License
 
