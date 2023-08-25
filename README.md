@@ -14,10 +14,18 @@ The code depends on the [BayesFlow](https://github.com/stefanradev93/BayesFlow) 
 
 ## Cite
 
-Coming soon...
-
+You can easily cite the proceedings paper as:
 ```bibtex
-Coming soon...
+@InProceedings{radev2023jana,
+  title = 	 {{JANA}: Jointly amortized neural approximation of complex {B}ayesian models},
+  author =       {Radev, Stefan T. and Schmitt, Marvin and Pratz, Valentin and Picchini, Umberto and K\"othe, Ullrich and B\"urkner, Paul-Christian},
+  booktitle = 	 {Proceedings of the 39th Conference on Uncertainty in Artificial Intelligence},
+  pages = 	 {1695--1706},
+  year = 	 {2023},
+  volume = 	 {216},
+  series = 	 {Proceedings of Machine Learning Research},
+  publisher =    {PMLR},
+}
 ```
 
 ## Support
